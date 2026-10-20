@@ -35,7 +35,7 @@ async def guardar_base_datos(datos):
         await f.write(json.dumps(datos, indent=4))
 
 # === CREATE === Post
-async def crear_producto(codigo, nombre, stock, categoria):
+async def crear_producto(codigo, nombre, stock, categoria="general"):
     async with db_lock:
         # Simular latencia
         await asyncio.sleep(0.5)
