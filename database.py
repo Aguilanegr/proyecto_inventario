@@ -35,7 +35,7 @@ async def guardar_base_datos(datos):
         await f.write(json.dumps(datos, indent=4))
 
 # === CREATE === Post
-async def crear_producto(codigo, nombre, stock):
+async def crear_producto(codigo, nombre, stock, categoria):
     async with db_lock:
         # Simular latencia
         await asyncio.sleep(0.5)
@@ -45,7 +45,7 @@ async def crear_producto(codigo, nombre, stock):
             if dato["codigo"] == codigo:
                 raise ValueError(f"El producto con el código {codigo} ya existe.")
 
-        nuevo_producto = {"codigo": codigo, "nombre": nombre, "stock": stock}
+        nuevo_producto = {"codigo": codigo, "nombre": nombre, "stock": stock, "categoria": categoria}
         datos.append(nuevo_producto)
         await guardar_base_datos(datos)
         

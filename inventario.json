@@ -1,0 +1,26 @@
+[
+    {
+        "codigo": "M001",
+        "nombre": "Llanta trasera",
+        "stock": 8,
+        "categoria": "Llantas"
+    },
+    {
+        "codigo": "M002",
+        "nombre": "Filtro de aire",
+        "stock": 2,
+        "categoria": "Filtros"
+    },
+    {
+        "codigo": "M003",
+        "nombre": "Bujía NGK",
+        "stock": 1,
+        "categoria": "Motor"
+    },
+    {
+        "codigo": "M004",
+        "nombre": "Llanta delantera",
+        "stock": 10,
+        "categoria": "Llantas"
+    }
+]
