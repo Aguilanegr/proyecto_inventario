@@ -29,7 +29,7 @@ async def buscar_un_producto(codigo_producto: str):
         producto = await obtener_producto(codigo_producto)
         return producto
     except KeyError:
-        raise HTTPException(status_code=404, detail="El producto que se solicita no existe en la BD.")
+        raise HTTPException(status_code=404, detail="El producto solicitado no existe en la BD.")
 
 @apiRest.get("/categorias")
 async def obtener_categorias():
