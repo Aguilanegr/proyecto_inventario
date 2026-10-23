@@ -1,5 +1,6 @@
-from fastapi import FastAPI, HTTPException #importo mi framework
-from database import leer_base_datos, obtener_producto
+from fastapi import FastAPI, HTTPException, Request
+from database import leer_base_datos, obtener_producto, guardar_base_datos
+from schemas import ProductoCreate
 
 # Inicializar la aplicación
 apiRest = FastAPI(
@@ -8,8 +9,8 @@ apiRest = FastAPI(
     version="1.0.0"
 )
 
-# Nuestro primer endpoint
-@apiRest.get("/") # Decorador -> Función que recibe como parámetro otra función
+# 1. Ruta principal
+@apiRest.get("/")
 async def ruta_principal():
     return {"mensaje": "¡Bienvenido a mi primera API Rest!"}
 
@@ -17,51 +18,66 @@ async def ruta_principal():
 async def estado_servidor():
     return {"status": "En línea", "servicios": "Operativos sin ningun invonveniente"}
 
+# 2. Listar todos los productos
 @apiRest.get("/productos")
 async def listar_productos():
     datos = await leer_base_datos()
     return {"cantidad": len(datos), "productos": datos}
-
-@apiRest.get("/productos/{codigo_producto}")
-async def buscar_un_producto(codigo_producto: str):
-    try:
-        # Para llamar a la función de obtener producto
-        producto = await obtener_producto(codigo_producto)
-        return producto
-    except KeyError:
-        raise HTTPException(status_code=404, detail="El producto solicitado no existe en la BD.")
 
 @apiRest.get("/categorias")
 async def obtener_categorias():
     datos = await leer_base_datos()
     categorias = set()
     for producto in datos:
-        if "categoria" in producto:
-            categorias.add(producto["categoria"])
-            return {"categorias": list(categorias)}
-        
+        cat = producto.get("categoria")
+        if cat:
+            categorias.add(cat)
+    return {"categorias": list(categorias)}
 
 @apiRest.get("/alertas/stock")
-async def obtener_stock_critico():
+async def alerta_stock():
     datos = await leer_base_datos()
-    productos_criticos = [p for p in datos if p.get("stock", 0) <= 3]
-    
-    return {
-        "total_en_alerta": len(productos_criticos),
-        "productos": productos_criticos
-    }
+    productos_criticos = []
+    for producto in datos:
+        if producto.get("stock", 999) <= 3:
+            productos_criticos.append(producto)
+    return {"cantidad": len(productos_criticos), "productos": productos_criticos}
 
 @apiRest.get("/productos/buscar/{palabra_clave}")
-async def buscar_por_nombre(palabra_clave: str):
+async def buscar_productos(palabra_clave: str):
     datos = await leer_base_datos()
-    
     resultados = []
     for producto in datos:
-        if palabra_clave.lower() in producto.get("nombre", "").lower():
+        if palabra_clave.lower() in producto.get("nombre","").lower():
             resultados.append(producto)
-            
-    return {
-        "busqueda": palabra_clave,
-        "coincidencias": len(resultados),
-        "resultados": resultados
-    }
+    return {"cantidad": len(resultados), "productos": resultados}
+
+@apiRest.get("/productos/{codigo_producto}")
+async def buscar_un_producto(codigo_producto: str):
+    try:
+        producto = await obtener_producto(codigo_producto)
+        return producto
+    except KeyError:
+        raise HTTPException(status_code=404, detail="El producto solicitado no existe en la BD.")
+
+@apiRest.post("/productos", status_code=201)
+async def registrar_nuevo_producto(producto: ProductoCreate):
+    datos = await leer_base_datos()
+    for dato in datos:
+        if dato["codigo"] == producto.codigo:
+            raise HTTPException(status_code=400, detail="El código de producto ya existe.")
+    nuevo_producto = producto.model_dump()
+    datos.append(nuevo_producto)
+    await guardar_base_datos(datos)
+    return {"mensaje": "Producto registrado correctamente", "producto": nuevo_producto}
+
+@apiRest.put("/productos/{codigo_producto}")
+async def actualizar_producto(codigo_producto: str, producto_actualizado: ProductoCreate):
+    datos = await leer_base_datos()
+    for posicion, dato in enumerate(datos):
+        if dato["codigo"] == codigo_producto:
+            datos[posicion] = producto_actualizado.model_dump()
+            datos[posicion]["codigo"] = codigo_producto
+            await guardar_base_datos(datos)
+            return {"mensaje": "Producto actualizado", "producto": datos[posicion]}
+    raise HTTPException(status_code=404, detail="Producto no encontrado")
