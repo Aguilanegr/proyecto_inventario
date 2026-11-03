@@ -89,4 +89,4 @@ async def actualizacion_parcial(placa: str, orden_patch: OrdenPatch):
             datos[i].update(datos_a_actualizar)
             await guardar_base_datos(datos)
             return {"mensaje": "La orden ha sido actualizada", "orden": datos[i]} 
-    raise HTTPException(status_code=404, detail="La orden no existe.")
+    raise HTTPException(status_code=404, detail="Las ordenes no existe")

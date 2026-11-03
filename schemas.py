@@ -21,7 +21,7 @@ class OrdenUpdate(BaseModel):
         return self
     
 class OrdenPatch(BaseModel):
-    nuevo_estado: Optional[str] = Field(None, description="Ej: En diagnóstico, Reparada, Entregada")
+    nuevo_estado: Optional[str] = Field(None, description="Ej: En el diagnóstico, Reparada, Entregada")
     costo_reparacion: Optional[float] = Field(None, ge=0)
     falla_reportada: Optional[str] = None
 
