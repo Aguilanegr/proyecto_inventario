@@ -4,7 +4,7 @@ from typing import Optional
 # Lo que entra cuando llega la moto
 class OrdenCreate(BaseModel):
     placa: str = Field(..., min_length=5, max_length=6, description="Placa de la moto (sin espacios)")
-    modelo: str = Field(..., description="Marca y modelo. Ej: Bajaj Dominar 400")
+    modelo: str = Field(..., description="Marca y el modelo. Ej: Bajaj Dominar 400")
     falla_reportada: str = Field(..., description="Descripción del problema por el cliente")
 
 # Lo que entra cuando el mecánico actualiza la orden

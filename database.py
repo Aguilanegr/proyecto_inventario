@@ -7,7 +7,7 @@ async def leer_base_datos():
     try:
         async with aiofiles.open(ARCHIVO_DB, mode='r', encoding='utf-8') as f:
             contenido = await f.read()
-            # Validamos si el archivo está vacío
+            # Validamos si el archivo está vacíos
             if not contenido.strip():
                 return []
             return json.loads(contenido)
