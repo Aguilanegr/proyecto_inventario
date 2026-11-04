@@ -7,7 +7,7 @@ router = APIRouter(prefix="/ordenes", tags=["Gestionar ordenes"])
 
 @router.get("/")
 async def obtener_ordenes(
-    estado: Optional[str] = Query(None, description="Filtrar por el estado"),
+    estado: Optional[str] = Query(None, description="Filtrar por  estado"),
     modelo: Optional[str] = Query(None, description="Filtrar por modelo ej: Bajaj"),
     costo_minimo: Optional[float] = Query(None, ge=0, description="Costo minimo")
 ):
