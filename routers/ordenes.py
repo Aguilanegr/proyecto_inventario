@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
 from typing import Optional
 from schemas import OrdenCreate, OrdenPatch, OrdenUpdate
 from database import leer_base_datos, guardar_base_datos
+from dependencias import parametros_paginacion, verificar_api_key
 
 router = APIRouter(prefix="/ordenes", tags=["Gestionar ordenes"])
 
@@ -26,7 +27,7 @@ async def obtener_ordenes(
     return {"total_ordenes": len(datos), "ordenes": datos}
 
 @router.post("/", status_code=201)
-async def crear_orden(orden: OrdenCreate):
+async def crear_orden(orden: OrdenCreate, api_key: str = Depends(verificar_api_key)):
     datos = await leer_base_datos()
     
     for item in datos:
@@ -43,20 +44,19 @@ async def crear_orden(orden: OrdenCreate):
     datos.append(nueva_orden) 
     await guardar_base_datos(datos)
     
-    return {"mensaje": "Orden creada exitosamente", "orden": nueva_orden}
+    return {"mensaje": "Orden creada exitosamente", "orden": nueva_orden, "api_key": api_key}
 
 @router.get("/paginadas")
-async def obtener_ordenes_paginadas(
-    skip: int = Query(0, description="Cuantos registros saltar"),
-    limit: int = Query(10, description="Limite de registros a devolver")
-):
+async def obtener_ordenes_paginadas(estado: Optional[str] = None, paginacion: dict = Depends(parametros_paginacion)):
     datos = await leer_base_datos()
+    skip = paginacion["skip"]
+    limit = paginacion["limit"]
     datos_paginados = datos[skip: skip + limit]
+    if estado:
+        datos_paginados = [o for o in datos_paginados if o["estado"].lower() == estado.lower()]
     return {
         "mostrando": len(datos_paginados),
-        "total_bd": len(datos),
         "skip": skip,
-        "limit": limit,
         "ordenes": datos_paginados
     }
 

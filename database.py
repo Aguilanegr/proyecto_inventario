@@ -19,3 +19,15 @@ async def leer_base_datos():
 async def guardar_base_datos(datos):
     async with aiofiles.open(ARCHIVO_DB, mode='w', encoding='utf-8') as f:
         await f.write(json.dumps(datos, indent=4))
+
+ARCHIVO ="mecanicos.json"
+
+async def leer_mecanicos():
+    if not os.path.exists(ARCHIVO):
+        return[]
+    with open(ARCHIVO, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+async def guardar_mecanicos(datos):
+    with open(ARCHIVO, "w", encoding="utf-8") as f:
+        json.dump(datos, f, indent=4, ensure_ascii=False)

@@ -25,11 +25,7 @@ class OrdenPatch(BaseModel):
     costo_reparacion: Optional[float] = Field(None, ge=0)
     falla_reportada: Optional[str] = None
 
-class OrdenCreate(BaseModel):
-    placa: str = Field(..., max_length=6)
-    modelo: str = Field(...)
-    falla_reportada: str = Field(...)
-
-class OrdenUpdate(BaseModel):
-    nuevo_estado:str 
-    costo_reparacion: float
+class MecanicoCreate(BaseModel):
+    nombre: str 
+    especialidad: str
+    salario: float
