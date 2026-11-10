@@ -5,7 +5,7 @@ from routers import mecanicos
 
 
 app= FastAPI(
-    title="El taller del gerente",
+    title="El taller del gerente1",
 )
 
 app.include_router(mecanicos.router)
