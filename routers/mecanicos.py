@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from dependencias import vereficar_auditor, verificar_gerente
-from schemas import MecanicoCreate
+from schemas.mecanicos import MecanicoCreate
 from database import leer_mecanicos, guardar_mecanicos
 
 router = APIRouter(prefix="/mecanicos", tags=["mecanicos"])
